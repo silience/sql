@@ -8,7 +8,9 @@ SQLite是一款轻型的数据库。sqlite存在一个叫SQLITE_MASTER的表，�
 0×02使用参数：
   
   python sqlite.py -u url --tables＃获取所有表名
+  
   python sqlite.py -u url --columns＃获取所有表结构，从而获取字段值
+  
   python sqlite.py -u url -T table_name -C column_name -d＃获取指定字段内容
 
 0×03：信息获取
