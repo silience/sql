@@ -2,7 +2,7 @@
 Sqlite联合注入辅助脚本
 
 0×01概述：
-SQLite的，是一款轻型的数据库。sqlite存在一个叫SQLITE_MASTER的表，这与MySQL5.x的INFORMATION_SCHEMA表类似。sqlite_master 表中保存了数据库中所有表的信息，该表中比较有用的字段有“name,sql”，name字段存放的是表名，sql字段存放的是表结构。可以通过内置函数sqlite_version()获取版本信息，和其他数据库一样，通过“order by”判断长度，该数据库的注释符和ORACLE数据库一样，都是--。
+SQLite是一款轻型的数据库。sqlite存在一个叫SQLITE_MASTER的表，这与MySQL5.x的INFORMATION_SCHEMA表类似。sqlite_master 表中保存了数据库中所有表的信息，该表中比较有用的字段有“name,sql”，name字段存放的是表名，sql字段存放的是表结构。可以通过内置函数sqlite_version()获取版本信息，和其他数据库一样，通过“order by”判断长度，该数据库的注释符和ORACLE数据库一样，都是--。
 
 0×02使用参数：
 python sqlite.py -u url --tables＃获取所有表名
