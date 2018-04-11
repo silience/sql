@@ -31,7 +31,7 @@ def SendData(target, poc):
     headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:59.0) Gecko/20100101 Firefox/59.0",
                "Accept": "application/json, text/javascript, */*; q=0.01",
                "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-               "Accept-Encoding": "gzip, deflate", "Referer": "http://rcjy.szns.gov.cn/home",
+               "Accept-Encoding": "gzip, deflate", "Referer": "",
                "Cookie": "safedog-flow-item=C3D1A1E4021D97E59C56A67DC0C53D2D; "
                          "ASP.NET_SessionId=g5vaceg2zozfjv42p4kwmxkb",
                "Connection": "close"}
